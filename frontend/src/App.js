@@ -39,11 +39,16 @@ import axios from "axios";
 import Ngosign from "./components/ngosign";
 // import './App.css';
 import './index.css';
+import NgosCarousel from "./components/carousel";
 // import MyForm from './components/myform'; // ✅ Import your form component
 import Navbar from './components/navbar'; 
 import Footer from "./components/footer";
 import Login from "./components/login";
-
+import HowItWorks from './components/work'
+import FoodWasteAwareness from './components/aware'
+import SocialImpact from './components/impact'
+// import NGODashboard from './components/dashboard'
+// import FarmerSurplus from './components/farfood'
 function App() {
   // const [farmer, setFarmer] = useState([]);
 
@@ -64,6 +69,7 @@ function App() {
   return (
     <div className="App">
       <Navbar />
+      <NgosCarousel />
     
       {/* <h1>Trying to connect React with Django</h1> */}
 
@@ -79,8 +85,13 @@ function App() {
       {/* 📬 Form to submit new data to Django */}
       {/* <h2>Submit Contact Form</h2> */}
       {/* <MyForm /> */}
-      <Ngosign />
-      <Login/>
+      <carousel />
+      {/* <FarmerSurplus /> */}
+      <HowItWorks />
+      <FoodWasteAwareness />
+      <SocialImpact />
+      {/* <NGODashboard /> */}
+      {/* <Login/> */}
       <Footer />
     </div>
   );
