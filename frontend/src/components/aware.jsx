@@ -35,7 +35,7 @@ export default function FoodWasteImpact() {
     <section className="py-24 px-6 bg-gray-50">
       <div className="max-w-4xl mx-auto text-center mb-16">
         <h2 className="text-5xl font-extrabold text-gray-800 leading-tight">
-          The Dark Reality of Food Waste
+          The negative impacts of Food Waste
         </h2>
         <p className="mt-4 text-lg text-gray-600">
           Behind every wasted meal is a story of hunger, climate damage, and lost opportunity.

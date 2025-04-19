@@ -10,12 +10,12 @@ const slides = [
     description: 'Helping underprivileged people lead a better life.',
   },
   {
-    image: '/images/ngo2.jpg',
+    image: 'https://i.pinimg.com/736x/00/ed/95/00ed9559581782185c21e055f80b2526.jpg',
     title: 'Support & Care',
     description: 'Bringing resources and love to those in need.',
   },
   {
-    image: '/images/ngo3.jpg',
+    image: 'https://i.pinimg.com/736x/fe/d3/d2/fed3d2bd1f6b99aa2af1c0259da4971e.jpg',
     title: 'Education for All',
     description: 'We aim to educate every child.',
   },
