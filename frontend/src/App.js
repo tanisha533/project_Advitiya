@@ -1,98 +1,57 @@
-// import{useState, useEffect} from "react";
-// import axios from "axios";
-// import './App.css';
-
-// function App() {
-//   const[farmer, setFarmer] = useState([])
-//   useEffect(() => {
-//     async function getAllFarmer() {
-//       try {
-//         const farmer = await axios.get("http://127.0.0.1:8000/api/farmer/");
-//         console.log(farmer.data);
-//         setFarmer(farmer.data);
-//       } catch (error) {
-//         console.log(error);
-//       }
-//     }
-  
-//     getAllFarmer();
-//   }, []);
-  
-//   return (
-//     <div className="App">
-//       <h1>trying to connect react with django</h1>
-//       {
-//         farmer.map((farmer, i)=>{
-//           return(
-//             <h4 key={i}>{farmer.name} {farmer.email}</h4>
-//           )
-//         })
-//       }
-//     </div>
-//   );
-// }
-
-// export default App;
 import { useState, useEffect } from "react";
 import axios from "axios";
-// import ngosign from './components/ngosign';
-import Ngosign from "./components/ngosign";
-// import './App.css';
 import './index.css';
 import NgosCarousel from "./components/carousel";
-// import MyForm from './components/myform'; // ✅ Import your form component
 import Navbar from './components/navbar'; 
 import Footer from "./components/footer";
 import Login from "./components/login";
 import HowItWorks from './components/work'
 import FoodWasteAwareness from './components/aware'
 import SocialImpact from './components/impact'
-// import NGODashboard from './components/dashboard'
-// import FarmerSurplus from './components/farfood'
+import Ngosign from './components/ngosign'
+
 function App() {
-  // const [farmer, setFarmer] = useState([]);
+  const [ngoData, setNgoData] = useState([]);
 
-  // useEffect(() => {
-  //   async function getAllFarmer() {
-  //     try {
-  //       const response = await axios.get("http://127.0.0.1:8000/api/farmer/");
-  //       console.log(response.data);
-  //       setFarmer(response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
+  useEffect(() => {
+    const fetchNGOs = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/ngo/list/");
+        setNgoData(response.data);
+      } catch (error) {
+        console.error("Error fetching NGO data:", error);
+      }
+    };
 
-  //   getAllFarmer();
-  // }, []);
+    fetchNGOs();
+  }, []);
 
   return (
     <div className="App">
       <Navbar />
       <NgosCarousel />
-    
-      {/* <h1>Trying to connect React with Django</h1> */}
-
-      {/* 🧾 Display farmers fetched from Django */}
-      {/* {
-        farmer.map((farmer, i) => (
-          <h4 key={i}>{farmer.name} {farmer.email}</h4>
-        ))
-      } */}
-
-      <hr />
-
-      {/* 📬 Form to submit new data to Django */}
-      {/* <h2>Submit Contact Form</h2> */}
-      {/* <MyForm /> */}
-      <carousel />
-      {/* <FarmerSurplus /> */}
+      <Ngosign />
       <HowItWorks />
       <FoodWasteAwareness />
       <SocialImpact />
-      {/* <NGODashboard /> */}
-      {/* <Login/> */}
       <Footer />
+
+      {/* Display NGO Data */}
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">Registered NGOs</h2>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {ngoData.map((ngo) => (
+            <div key={ngo.id} className="bg-white shadow-lg rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-900">{ngo.organization}</h3>
+              <p className="mt-2 text-gray-600">{ngo.city}, {ngo.state}</p>
+              <div className="mt-4">
+                <p className="text-sm text-gray-500">Contact: {ngo.phone_number}</p>
+                <p className="text-sm text-gray-500">Email: {ngo.email}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
