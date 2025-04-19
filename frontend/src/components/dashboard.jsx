@@ -1,72 +1,132 @@
-// import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-// const Dashboard = () => {
-//   return (
-//     <div className="min-h-screen bg-[#f1f5f9] p-8">
-//       {/* Header */}
-//       <h1 className="text-4xl font-semibold text-gray-800 mb-8">Dashboard</h1>
+const Dashboard = () => {
+  const [activeTab, setActiveTab] = useState('current');
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
-//       {/* Search Box */}
-//       <div className="bg-white p-6 rounded-xl shadow flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-//         <div className="w-full sm:w-3/4">
-//           <label className="block text-sm font-medium text-gray-600 mb-1">Enter FSL Number</label>
-//           <input
-//             type="text"
-//             placeholder="e.g. FSL001"
-//             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-//           />
-//         </div>
-//         <button className="w-full sm:w-auto px-6 py-2 bg-[#14532d] text-white font-semibold rounded-md hover:bg-green-900">
-//           Search Case
-//         </button>
-//       </div>
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
-//       {/* Stats Cards */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-//         <div className="bg-white p-6 rounded-xl shadow text-center">
-//           <p className="text-5xl font-bold text-[#14532d]">24</p>
-//           <p className="mt-2 text-gray-700 text-lg font-medium">Total Registered Cases</p>
-//         </div>
-//         <div className="bg-white p-6 rounded-xl shadow text-center">
-//           <p className="text-5xl font-bold text-[#14532d]">12</p>
-//           <p className="mt-2 text-gray-700 text-lg font-medium">Total Transferred Cases</p>
-//         </div>
-//       </div>
+  const foodRequests = [
+    {
+      id: 1,
+      name: 'John Doe',
+      distance: '2.5 km',
+      location: '123 Main St',
+      type: 'Farmer',
+      quantity: '50 kg',
+      foodType: 'Vegetables'
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      distance: '1.8 km',
+      location: '456 Oak Ave',
+      type: 'Retailer',
+      quantity: '100 kg',
+      foodType: 'Fruits'
+    },
+    // Add more sample data as needed
+  ];
 
-//       {/* Case Table */}
-//       <div className="bg-white p-6 rounded-xl shadow overflow-x-auto">
-//         <h2 className="text-xl font-semibold text-gray-800 mb-4">Case Overview</h2>
-//         <table className="w-full table-auto border-collapse text-sm">
-//           <thead>
-//             <tr className="bg-[#14532d] text-white">
-//               <th className="px-4 py-2 border">Case No.</th>
-//               <th className="px-4 py-2 border">Case Type</th>
-//               <th className="px-4 py-2 border">Station</th>
-//               <th className="px-4 py-2 border">Status</th>
-//               <th className="px-4 py-2 border">Date</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             <tr className="text-gray-700 hover:bg-gray-100">
-//               <td className="border px-4 py-2">FSL001</td>
-//               <td className="border px-4 py-2">Theft</td>
-//               <td className="border px-4 py-2">RJ Nagar</td>
-//               <td className="border px-4 py-2 text-green-600 font-semibold">Completed</td>
-//               <td className="border px-4 py-2">12/04/2024</td>
-//             </tr>
-//             <tr className="text-gray-700 hover:bg-gray-100">
-//               <td className="border px-4 py-2">FSL002</td>
-//               <td className="border px-4 py-2">Homicide</td>
-//               <td className="border px-4 py-2">Udaipur PS</td>
-//               <td className="border px-4 py-2 text-yellow-600 font-semibold">Pending</td>
-//               <td className="border px-4 py-2">15/04/2024</td>
-//             </tr>
-//             {/* More rows can be added */}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// };
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-lg">
+        <div className="p-4">
+          <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
+        </div>
+        <nav className="mt-6">
+          <div className="px-4 space-y-2">
+            <button
+              onClick={() => setActiveTab('current')}
+              className={`w-full text-left px-4 py-2 rounded-lg ${
+                activeTab === 'current'
+                  ? 'bg-blue-100 text-blue-600'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              Current Listings
+            </button>
+            <button
+              onClick={() => setActiveTab('previous')}
+              className={`w-full text-left px-4 py-2 rounded-lg ${
+                activeTab === 'previous'
+                  ? 'bg-blue-100 text-blue-600'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              Previous Listings
+            </button>
+          </div>
+        </nav>
+        <div className="absolute bottom-0 w-full p-4 border-t">
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`w-full text-left px-4 py-2 rounded-lg ${
+              activeTab === 'settings'
+                ? 'bg-blue-100 text-blue-600'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            Settings
+          </button>
+          <button
+            onClick={handleLogout}
+            className="w-full text-left px-4 py-2 rounded-lg text-red-600 hover:bg-red-50"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
 
-// export default Dashboard;
+      {/* Main Content */}
+      <div className="flex-1 p-8 overflow-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {foodRequests.map((request) => (
+            <div
+              key={request.id}
+              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {request.name}
+                  </h3>
+                  <p className="text-sm text-gray-500">{request.type}</p>
+                </div>
+                <span className="text-sm text-gray-500">{request.distance}</span>
+              </div>
+              <div className="mt-4">
+                <p className="text-gray-600">
+                  <span className="font-medium">Location:</span> {request.location}
+                </p>
+                <p className="text-gray-600">
+                  <span className="font-medium">Food Type:</span> {request.foodType}
+                </p>
+                <p className="text-gray-600">
+                  <span className="font-medium">Quantity:</span> {request.quantity}
+                </p>
+              </div>
+              <div className="mt-6 flex justify-between items-center">
+                <button className="text-blue-600 hover:text-blue-800">
+                  View Map
+                </button>
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                  Claim Now
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

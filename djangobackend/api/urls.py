@@ -8,13 +8,39 @@
 # ]
 
 # from django.urls import path
-from djangobackend.urls import path
+# from .views import (
+#     NGOUserCreateView,
+#     NGOListView,
+#     LoginView,
+#     VerifyTokenView
+# )
+
+
+# urlpatterns = [
+#     path('ngo/signup/', NGOUserCreateView.as_view(), name='ngo_signup'),
+#     path('ngo/list/', NGOListView.as_view(), name='ngo_list'),
+#     path('login/', LoginView.as_view(), name='login'),
+#     path('verify-token/', VerifyTokenView.as_view(), name='verify_token'),
+# ]
+
+from django.urls import path
 from .views import (
     NGOUserCreateView,
-    NGOListView
+    NGOListView,
+    LoginView,
+    VerifyTokenView,
+    RequestPasswordResetView,
+    PasswordResetConfirmView,
 )
 
 urlpatterns = [
     path('ngo/signup/', NGOUserCreateView.as_view(), name='ngo_signup'),
     path('ngo/list/', NGOListView.as_view(), name='ngo_list'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('verify-token/', VerifyTokenView.as_view(), name='verify_token'),
+    path('password-reset/', RequestPasswordResetView.as_view(), name='password_reset'),
+    path('reset-confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 ]
+
+
+

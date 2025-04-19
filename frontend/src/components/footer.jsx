@@ -3,7 +3,7 @@ export default function Footer() {
       <footer className="bg-gray-800 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <p className="text-white text-lg mb-8 max-w-3xl">
-            Making the world a better place through constructing elegant hierarchies.
+            Saving food, Feeding Lives!
           </p>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
