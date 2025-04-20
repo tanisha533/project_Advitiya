@@ -5,19 +5,19 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'
 
 const slides = [
   {
-    image: '/images/ngo1.jpg',
-    title: 'Empowering Communities',
-    description: 'Helping underprivileged people lead a better life.',
+    image: 'https://img.freepik.com/free-photo/food-waste-prevention-arrangement-with-white-background_23-2149533488.jpg',
+    title: 'Prevent Food Waste',
+    description: 'Smart storage solutions to keep food fresh longer.',
   },
   {
-    image: 'https://i.pinimg.com/736x/00/ed/95/00ed9559581782185c21e055f80b2526.jpg',
-    title: 'Support & Care',
-    description: 'Bringing resources and love to those in need.',
+    image: 'https://img.freepik.com/free-photo/food-donation-box-with-white-background_23-2149533486.jpg',
+    title: 'Food Donation',
+    description: 'Share surplus food with those in need.',
   },
   {
-    image: 'https://i.pinimg.com/736x/fe/d3/d2/fed3d2bd1f6b99aa2af1c0259da4971e.jpg',
-    title: 'Education for All',
-    description: 'We aim to educate every child.',
+    image: 'https://img.freepik.com/free-photo/food-preservation-arrangement-with-white-background_23-2149533489.jpg',
+    title: 'Preserve & Save',
+    description: 'Learn proper food preservation techniques.',
   },
 ]
 

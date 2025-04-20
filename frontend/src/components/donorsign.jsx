@@ -1,131 +1,99 @@
-'use client'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 
-import { useState, useEffect } from 'react'
-import { ChevronDownIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid'
-import axios from 'axios'
-
-export default function Ngosign() {
+const DonorSignup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
-    organization: '',
     email: '',
     password: '',
+    user_type: '',
+    other_type: '',
     phone_number: '',
     postal_code: '',
     colony: '',
     city: '',
     state: '',
-    agreed_to_terms: false,
-    latitude: 'null',
-    longitude: 'null'
-  })
-
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-
-  // Automatically get user location
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setFormData((prev) => ({
-            ...prev,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          }))
-        },
-        (error) => {
-          console.error('Geolocation error:', error)
-        }
-      )
-    } else {
-      console.error('Geolocation is not supported by this browser.')
-    }
-  }, [])
+    agreed_to_terms: false
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setSuccess('')
+    e.preventDefault();
+    setError('');
+    setSuccess('');
 
-    // Validate form data
-    if (!formData.first_name || !formData.last_name || !formData.organization || 
-        !formData.email || !formData.password || !formData.phone_number || 
-        !formData.postal_code || !formData.colony || !formData.city || 
-        !formData.state || !formData.agreed_to_terms) {
-        setError('Please fill in all required fields')
-        return
+    // Validate required fields
+    if (!formData.agreed_to_terms) {
+      setError('You must agree to the terms and conditions');
+      return;
     }
 
-    // Validate phone number format
-    const phoneRegex = /^\+?[1-9]\d{9,14}$/
-    if (!phoneRegex.test(formData.phone_number)) {
-        setError('Please enter a valid phone number (e.g., +919876543210)')
-        return
-    }
-
-    // Validate postal code format
-    const postalRegex = /^\d{6}$/
-    if (!postalRegex.test(formData.postal_code)) {
-        setError('Please enter a valid 6-digit postal code')
-        return
+    if (formData.user_type === 'other' && !formData.other_type) {
+      setError('Please specify your type when selecting "Others"');
+      return;
     }
 
     try {
-        const response = await axios.post('http://localhost:8000/api/ngo/signup/', formData, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
+      const response = await axios.post('http://localhost:8000/api/donor/signup/', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-        if (response.data.status === 'success') {
-            setSuccess('Registration successful! You can now login.')
-            setFormData({
-                first_name: '',
-                last_name: '',
-                organization: '',
-                email: '',
-                password: '',
-                phone_number: '',
-                postal_code: '',
-                colony: '',
-                city: '',
-                state: '',
-                agreed_to_terms: false
-            })
-        }
+      if (response.data.status === 'success') {
+        setSuccess('Registration successful! Please check your email.');
+        setFormData({
+          first_name: '',
+          last_name: '',
+          email: '',
+          password: '',
+          user_type: '',
+          other_type: '',
+          phone_number: '',
+          postal_code: '',
+          colony: '',
+          city: '',
+          state: '',
+          agreed_to_terms: false
+        });
+        navigate('/login');
+      }
     } catch (err) {
-        console.error('Registration error:', err.response?.data)
-        if (err.response?.data?.errors) {
-            // Handle validation errors
-            const errorMessages = Object.entries(err.response.data.errors)
-                .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
-                .join('\n')
-            setError(errorMessages)
-        } else {
-            setError(err.response?.data?.message || 'Registration failed. Please try again.')
-        }
+      console.error('Registration error:', err.response?.data);
+      if (err.response?.data?.errors) {
+        // Handle validation errors
+        const errorMessages = Object.entries(err.response.data.errors)
+          .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
+          .join('\n');
+        setError(errorMessages);
+      } else {
+        setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      }
     }
-  }
+  };
 
   return (
     <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8 relative">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
-          NGO Registration
+          Donor Registration
         </h2>
         <p className="mt-2 text-lg leading-8 text-gray-600">
-          Join our network of organizations making a difference in the world.
+          Join our network of donors making a difference in the world.
         </p>
       </div>
 
@@ -143,7 +111,6 @@ export default function Ngosign() {
 
       <form onSubmit={handleSubmit} className="mx-auto mt-16 max-w-xl sm:mt-20">
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-          {/* First name */}
           <div>
             <label htmlFor="first_name" className="block text-sm font-semibold leading-6 text-gray-900">
               First name
@@ -161,7 +128,6 @@ export default function Ngosign() {
             </div>
           </div>
 
-          {/* Last name */}
           <div>
             <label htmlFor="last_name" className="block text-sm font-semibold leading-6 text-gray-900">
               Last name
@@ -179,25 +145,48 @@ export default function Ngosign() {
             </div>
           </div>
 
-          {/* Organization */}
           <div className="sm:col-span-2">
-            <label htmlFor="organization" className="block text-sm font-semibold leading-6 text-gray-900">
-              Organization Name
+            <label htmlFor="user_type" className="block text-sm font-semibold leading-6 text-gray-900">
+              What describes you?
             </label>
             <div className="mt-2.5">
-              <input
-                type="text"
-                name="organization"
-                id="organization"
-                value={formData.organization}
+              <select
+                name="user_type"
+                id="user_type"
+                value={formData.user_type}
                 onChange={handleChange}
                 required
                 className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
+              >
+                <option value="">Select Type</option>
+                <option value="farmer">Farmer</option>
+                <option value="retailer">Retailer</option>
+                <option value="business">Business Owner</option>
+                <option value="donor">Donor</option>
+                <option value="other">Others</option>
+              </select>
             </div>
           </div>
 
-          {/* Email */}
+          {formData.user_type === 'other' && (
+            <div className="sm:col-span-2">
+              <label htmlFor="other_type" className="block text-sm font-semibold leading-6 text-gray-900">
+                Please specify
+              </label>
+              <div className="mt-2.5">
+                <input
+                  type="text"
+                  name="other_type"
+                  id="other_type"
+                  value={formData.other_type}
+                  onChange={handleChange}
+                  required
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+          )}
+
           <div className="sm:col-span-2">
             <label htmlFor="email" className="block text-sm font-semibold leading-6 text-gray-900">
               Email
@@ -215,7 +204,6 @@ export default function Ngosign() {
             </div>
           </div>
 
-          {/* Password */}
           <div className="sm:col-span-2">
             <label htmlFor="password" className="block text-sm font-semibold leading-6 text-gray-900">
               Password
@@ -246,7 +234,6 @@ export default function Ngosign() {
             </div>
           </div>
 
-          {/* Phone Number */}
           <div className="sm:col-span-2">
             <label htmlFor="phone_number" className="block text-sm font-semibold leading-6 text-gray-900">
               Phone number
@@ -267,7 +254,6 @@ export default function Ngosign() {
             </div>
           </div>
 
-          {/* Postal Code */}
           <div className="sm:col-span-2">
             <label htmlFor="postal_code" className="block text-sm font-semibold leading-6 text-gray-900">
               Postal Code
@@ -287,7 +273,6 @@ export default function Ngosign() {
             </div>
           </div>
 
-          {/* Colony */}
           <div className="sm:col-span-2">
             <label htmlFor="colony" className="block text-sm font-semibold leading-6 text-gray-900">
               Colony/Area
@@ -305,7 +290,6 @@ export default function Ngosign() {
             </div>
           </div>
 
-          {/* City */}
           <div>
             <label htmlFor="city" className="block text-sm font-semibold leading-6 text-gray-900">
               City
@@ -323,7 +307,6 @@ export default function Ngosign() {
             </div>
           </div>
 
-          {/* State */}
           <div>
             <label htmlFor="state" className="block text-sm font-semibold leading-6 text-gray-900">
               State
@@ -371,10 +354,12 @@ export default function Ngosign() {
             type="submit"
             className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600"
           >
-            Register NGO
+            Register
           </button>
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
+
+export default DonorSignup;

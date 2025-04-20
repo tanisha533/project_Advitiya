@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate,useLocation } from "react-router-dom";
 import axios from "axios";
 import './index.css';
 import NgosCarousel from "./components/carousel";
@@ -10,9 +10,11 @@ import HowItWorks from './components/work'
 import FoodWasteAwareness from './components/aware'
 import SocialImpact from './components/impact'
 import Ngosign from './components/ngosign'
+import DonorSignup from './components/donorsign'
 import FarmerSurplus from "./components/addfood";
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Dashboard from './components/dashboard';
+// import Dashboard from './components/dashboard';
+import Dashboard from './components/donordash';
 
 // Set default base URL for axios
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -34,13 +36,15 @@ axios.interceptors.request.use(
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
   if (!user) {
-    return <Navigate to="/login" />;
+    // Redirect to login with the attempted location
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return children;
@@ -72,6 +76,7 @@ function AppContent() {
   const HomePage = () => (
     <>
       <NgosCarousel />
+      {/* <Dashboard /> */}
       <HowItWorks />
       <FoodWasteAwareness />
       <SocialImpact />
@@ -108,22 +113,17 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/about" element={<div>About Page</div>} />
         <Route path="/contact" element={<div>Contact Page</div>} />
+        
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
         } />
         <Route path="/ngo/signup" element={<Ngosign />} />
-        <Route path="/farmer-retailer/signup" element={<div>Farmer/Retailer Signup Page</div>} />
-        <Route 
-          path="/addfood" 
-          element={
-            <ProtectedRoute>
-              <FarmerSurplus />
-            </ProtectedRoute>
-          } 
-        />
+        <Route path="/farmer-retailer/signup" element={<DonorSignup />} />
+        <Route path="/addfood" element={<FarmerSurplus />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        
       </Routes>
       <Footer />
     </div>

@@ -6,10 +6,12 @@ import { useAuth } from '../context/AuthContext';
 
 const navigation = [
   { name: 'Home', href: '/', current: true },
-  { name: 'About us', href: '/about', current: false },
   { name: 'Dashboard', href: '/dashboard', current: false },
+];
+
+const publicNavigation = [
   { name: 'Add Food', href: '/addfood', current: false },
-]
+];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -62,6 +64,15 @@ export default function Navbar() {
                         {item.name}
                       </Link>
                     ))}
+                    {publicNavigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -80,48 +91,18 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
-                    {/* Login button */}
                     <Link
                       to="/login"
                       className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                     >
-                      Login
+                      Login as NGO
                     </Link>
-
-                    {/* Sign in dropdown */}
-                    <Menu as="div" className="relative">
-                      <Menu.Button className="bg-indigo-600 text-white hover:bg-indigo-500 rounded-md px-3 py-2 text-sm font-medium">
-                        Sign in
-                      </Menu.Button>
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              to="/ngo/signup"
-                              className={classNames(
-                                active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700'
-                              )}
-                            >
-                              Sign in as NGO
-                            </Link>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              to="/farmer-retailer/signup"
-                              className={classNames(
-                                active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm text-gray-700'
-                              )}
-                            >
-                              Sign in as Farmer/Retailer
-                            </Link>
-                          )}
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Menu>
+                    <Link
+                      to="/ngo/signup"
+                      className="bg-indigo-600 text-white hover:bg-indigo-500 rounded-md px-3 py-2 text-sm font-medium"
+                    >
+                      Sign up as NGO
+                    </Link>
                   </>
                 )}
               </div>
@@ -140,6 +121,16 @@ export default function Navbar() {
                     'block rounded-md px-3 py-2 text-base font-medium'
                   )}
                   aria-current={item.current ? 'page' : undefined}
+                >
+                  {item.name}
+                </Disclosure.Button>
+              ))}
+              {publicNavigation.map((item) => (
+                <Disclosure.Button
+                  key={item.name}
+                  as={Link}
+                  to={item.href}
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
                 >
                   {item.name}
                 </Disclosure.Button>

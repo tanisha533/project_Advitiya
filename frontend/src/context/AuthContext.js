@@ -3,83 +3,119 @@ import axios from 'axios';
 
 const AuthContext = createContext(null);
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 second
-
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authState, setAuthState] = useState({
+    isAuthenticated: false,
+    user: null,
+    token: null,
+    loading: true
+  });
 
   useEffect(() => {
     const initAuth = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (token) {
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        
+        if (token && user) {
           try {
-            const response = await axios.get('/api/verify-token/', {
+            const response = await axios.get('http://localhost:8000/api/verify-token/', {
               headers: { Authorization: `Bearer ${token}` }
             });
+            
             if (response.data.valid) {
-              setUser(response.data.user);
+              setAuthState({
+                isAuthenticated: true,
+                user: response.data.user,
+                token: token,
+                loading: false
+              });
             } else {
               localStorage.removeItem('token');
-              setUser(null);
+              localStorage.removeItem('user');
+              setAuthState({
+                isAuthenticated: false,
+                user: null,
+                token: null,
+                loading: false
+              });
             }
           } catch (error) {
             console.error('Token verification failed:', error);
             localStorage.removeItem('token');
-            setUser(null);
+            localStorage.removeItem('user');
+            setAuthState({
+              isAuthenticated: false,
+              user: null,
+              token: null,
+              loading: false
+            });
           }
+        } else {
+          setAuthState(prev => ({ ...prev, loading: false }));
         }
-      } finally {
-        setLoading(false);
+      } catch (error) {
+        console.error('Auth initialization failed:', error);
+        setAuthState(prev => ({ ...prev, loading: false }));
       }
     };
 
     initAuth();
   }, []);
 
-  const login = async (email, password, retryCount = 0) => {
+  const login = async (email, password) => {
     try {
-      const response = await axios.post('/api/login/', {
+      const response = await axios.post('http://localhost:8000/api/login/', {
         email,
-        password,
+        password
       });
       
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setUser(user);
-      return { success: true };
-    } catch (error) {
-      console.error('Login error:', error);
-
-      if (error.message === 'Network Error' && retryCount < MAX_RETRIES) {
-        await sleep(RETRY_DELAY);
-        return login(email, password, retryCount + 1);
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        setAuthState({
+          isAuthenticated: true,
+          user: response.data.user,
+          token: response.data.token,
+          loading: false
+        });
+        return { success: true };
       }
-
-      return {
-        success: false,
-        error: error.response?.data?.message || 
-               error.message === 'Network Error' ? 
-               'Unable to connect to server. Please check your internet connection.' : 
-               'Login failed. Please try again.',
-      };
+    } catch (error) {
+      if (error.response) {
+        return { 
+          success: false, 
+          error: error.response.data.message || 'Login failed. Please try again.' 
+        };
+      } else if (error.request) {
+        return { 
+          success: false, 
+          error: 'Network error. Please check your connection and try again.' 
+        };
+      } else {
+        return { 
+          success: false, 
+          error: 'An error occurred. Please try again.' 
+        };
+      }
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    setUser(null);
+    localStorage.removeItem('user');
+    setAuthState({
+      isAuthenticated: false,
+      user: null,
+      token: null,
+      loading: false
+    });
   };
 
   const value = {
-    user,
+    ...authState,
     login,
-    logout,
-    loading,
+    logout
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

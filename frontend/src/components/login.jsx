@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
@@ -9,7 +9,11 @@ export default function Login() {
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+  
+  const from = location.state?.from?.pathname || '/Dashboard';
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,20 +30,21 @@ export default function Login() {
     const { success, error: loginError } = await login(formData.email, formData.password);
     
     if (success) {
-      navigate('/'); // Redirect to home page after successful login
+      navigate(from, { replace: true }); // Redirect to the original requested page
     } else {
       setError(loginError);
     }
   };
 
+
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img
+        {/* <img
           alt="Your Company"
-          src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+          // src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
           className="mx-auto h-10 w-auto"
-        />
+        /> */}
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Log in to your account
         </h2>
